@@ -134,7 +134,7 @@ def plot_demographic_breakdown(df):
     fig.savefig(f"{OUTPUT_DIR}/demographics.png", dpi=150, bbox_inches="tight")
     plt.close()
     print(f"  Saved: demographics.png")
-    
+
 def plot_time_series(df):
     monthly = df.groupby(["year", "month"]).agg(
         admissions=("patient_id", "count"),
@@ -159,3 +159,19 @@ def plot_time_series(df):
     fig.savefig(f"{OUTPUT_DIR}/time_series.png", dpi=150)
     plt.close()
     print(f"  Saved: time_series.png")
+    
+def plot_outcome_heatmap(df):
+    pivot = df.pivot_table(values="patient_id", index="disease",
+                           columns="outcome", aggfunc="count", fill_value=0)
+    # Normalize to percentages
+    pivot_pct = pivot.div(pivot.sum(axis=1), axis=0) * 100
+
+    fig, ax = plt.subplots(figsize=(12, 7))
+    sns.heatmap(pivot_pct, annot=True, fmt=".1f", cmap="RdYlGn",
+                linewidths=0.5, ax=ax, cbar_kws={"label": "% of Disease Cases"})
+    ax.set_title("Outcome Distribution by Disease (%)", fontsize=14, fontweight="bold")
+    fig.tight_layout()
+    fig.savefig(f"{OUTPUT_DIR}/outcome_heatmap.png", dpi=150)
+    plt.close()
+    print(f"  Saved: outcome_heatmap.png")
+
