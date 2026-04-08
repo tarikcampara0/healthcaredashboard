@@ -134,3 +134,28 @@ def plot_demographic_breakdown(df):
     fig.savefig(f"{OUTPUT_DIR}/demographics.png", dpi=150, bbox_inches="tight")
     plt.close()
     print(f"  Saved: demographics.png")
+    
+def plot_time_series(df):
+    monthly = df.groupby(["year", "month"]).agg(
+        admissions=("patient_id", "count"),
+        avg_los=("los_days", "mean"),
+        readmissions=("readmission", "sum"),
+    ).reset_index()
+    monthly["date"] = pd.to_datetime(monthly[["year", "month"]].assign(day=1))
+    monthly = monthly.sort_values("date")
+
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 8), sharex=True)
+
+    ax1.fill_between(monthly["date"], monthly["admissions"],
+                     alpha=0.3, color=C["teal"])
+    ax1.plot(monthly["date"], monthly["admissions"], color=C["teal"], linewidth=2)
+    ax1.set_ylabel("Monthly Admissions"); ax1.grid(alpha=0.3)
+    ax1.set_title("Monthly Admissions & Avg Length of Stay", fontsize=14, fontweight="bold")
+
+    ax2.plot(monthly["date"], monthly["avg_los"], color=C["coral"], linewidth=2, marker="o", markersize=3)
+    ax2.set_ylabel("Avg LOS (days)"); ax2.set_xlabel("Date"); ax2.grid(alpha=0.3)
+
+    fig.tight_layout()
+    fig.savefig(f"{OUTPUT_DIR}/time_series.png", dpi=150)
+    plt.close()
+    print(f"  Saved: time_series.png")
