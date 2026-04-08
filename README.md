@@ -1,4 +1,4 @@
-# healthcaredashboard
+
 # Healthcare Data Insights Dashboard
 
 A Python analytics project that processes 300,000+ healthcare records to uncover disease trends, hospital utilization patterns, and demographic breakdowns.
