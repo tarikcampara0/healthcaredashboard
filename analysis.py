@@ -74,3 +74,20 @@ def print_kpis(df):
     print(f"  Top Disease          : {top_disease:>15}")
     print(f"  Busiest Department   : {most_used_dept:>15}")
     print("=" * 55)
+def plot_disease_incidence(df):
+    counts = df["disease"].value_counts()
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+    bars = ax.bar(counts.index, counts.values,
+                  color=[C["teal"] if i % 2 == 0 else C["slate"] for i in range(len(counts))])
+    ax.set_title("Disease Incidence (All Records)", fontsize=15, fontweight="bold", pad=15)
+    ax.set_xlabel("Disease"); ax.set_ylabel("Patient Count")
+    ax.tick_params(axis="x", rotation=30)
+    for bar in bars:
+        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 200,
+                f"{bar.get_height():,.0f}", ha="center", fontsize=8, color="#333")
+    ax.grid(axis="y", alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(f"{OUTPUT_DIR}/disease_incidence.png", dpi=150)
+    plt.close()
+    print(f"  Saved: disease_incidence.png")
