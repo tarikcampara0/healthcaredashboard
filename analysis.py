@@ -159,7 +159,7 @@ def plot_time_series(df):
     fig.savefig(f"{OUTPUT_DIR}/time_series.png", dpi=150)
     plt.close()
     print(f"  Saved: time_series.png")
-    
+
 def plot_outcome_heatmap(df):
     pivot = df.pivot_table(values="patient_id", index="disease",
                            columns="outcome", aggfunc="count", fill_value=0)
@@ -174,4 +174,24 @@ def plot_outcome_heatmap(df):
     fig.savefig(f"{OUTPUT_DIR}/outcome_heatmap.png", dpi=150)
     plt.close()
     print(f"  Saved: outcome_heatmap.png")
+    
+def export_data(df):
+    df.to_csv(f"{OUTPUT_DIR}/cleaned_healthcare_data.csv", index=False)
+
+    # Summary tables
+    df.groupby("disease").agg(
+        patients=("patient_id", "count"),
+        avg_los=("los_days", "mean"),
+        readmit_rate=("readmission", "mean"),
+        avg_bill=("billed_amount", "mean"),
+    ).reset_index().to_csv(f"{OUTPUT_DIR}/disease_summary.csv", index=False)
+
+    df.groupby(["year", "quarter", "disease"])["patient_id"].count().reset_index(
+        name="admissions"
+    ).to_csv(f"{OUTPUT_DIR}/quarterly_admissions.csv", index=False)
+
+    print(f"  Exported cleaned data and summaries to {OUTPUT_DIR}/")
+
+
+
 
