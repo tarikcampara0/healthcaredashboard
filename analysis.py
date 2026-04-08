@@ -91,3 +91,46 @@ def plot_disease_incidence(df):
     fig.savefig(f"{OUTPUT_DIR}/disease_incidence.png", dpi=150)
     plt.close()
     print(f"  Saved: disease_incidence.png")
+def plot_hospital_usage(df):
+    usage = df.groupby(["year", "disease"])["patient_id"].count().reset_index()
+    pivot = usage.pivot(index="year", columns="disease", values="patient_id")
+
+    fig, ax = plt.subplots(figsize=(14, 6))
+    pivot.T.plot(kind="bar", ax=ax, colormap="tab10", width=0.8)
+    ax.set_title("Hospital Usage by Disease per Year", fontsize=14, fontweight="bold")
+    ax.set_xlabel("Disease"); ax.set_ylabel("Admissions")
+    ax.tick_params(axis="x", rotation=40)
+    ax.legend(title="Year", bbox_to_anchor=(1.01, 1), loc="upper left")
+    ax.grid(axis="y", alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(f"{OUTPUT_DIR}/hospital_usage.png", dpi=150)
+    plt.close()
+    print(f"  Saved: hospital_usage.png")
+
+
+def plot_demographic_breakdown(df):
+    fig, axes = plt.subplots(1, 3, figsize=(16, 5))
+# age group
+    age_counts = df["age_group"].value_counts().sort_index()
+    axes[0].bar(age_counts.index.astype(str), age_counts.values, color=C["teal"])
+    axes[0].set_title("Patients by Age Group", fontweight="bold")
+    axes[0].set_ylabel("Count"); axes[0].grid(axis="y", alpha=0.3)
+
+    # aender
+    gen_counts = df["gender"].value_counts()
+    axes[1].pie(gen_counts, labels=gen_counts.index, autopct="%1.1f%%",
+                colors=[C["teal"], C["coral"], C["amber"]],
+                wedgeprops={"edgecolor": "white", "linewidth": 2})
+    axes[1].set_title("Gender Distribution", fontweight="bold")
+
+    # insurance
+    ins_counts = df["insurance"].value_counts()
+    axes[2].barh(ins_counts.index, ins_counts.values, color=C["slate"])
+    axes[2].set_title("Insurance Type", fontweight="bold")
+    axes[2].set_xlabel("Count"); axes[2].grid(axis="x", alpha=0.3)
+
+    fig.suptitle("Patient Demographics", fontsize=16, fontweight="bold", y=1.01)
+    fig.tight_layout()
+    fig.savefig(f"{OUTPUT_DIR}/demographics.png", dpi=150, bbox_inches="tight")
+    plt.close()
+    print(f"  Saved: demographics.png")
