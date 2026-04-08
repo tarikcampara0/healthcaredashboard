@@ -174,7 +174,7 @@ def plot_outcome_heatmap(df):
     fig.savefig(f"{OUTPUT_DIR}/outcome_heatmap.png", dpi=150)
     plt.close()
     print(f"  Saved: outcome_heatmap.png")
-    
+
 def export_data(df):
     df.to_csv(f"{OUTPUT_DIR}/cleaned_healthcare_data.csv", index=False)
 
@@ -191,6 +191,28 @@ def export_data(df):
     ).to_csv(f"{OUTPUT_DIR}/quarterly_admissions.csv", index=False)
 
     print(f"  Exported cleaned data and summaries to {OUTPUT_DIR}/")
+    
+if __name__ == "__main__":
+    print("\n[1/5] Generating healthcare records...")
+    df = generate_healthcare_data(300_000)
+
+    print("\n[2/5] Cleaning data...")
+    df = clean_data(df)
+
+    print("\n[3/5] KPI Summary...")
+    print_kpis(df)
+
+    print("\n[4/5] Building visualizations...")
+    plot_disease_incidence(df)
+    plot_hospital_usage(df)
+    plot_demographic_breakdown(df)
+    plot_time_series(df)
+    plot_outcome_heatmap(df)
+
+    print("\n[5/5] Exporting data...")
+    export_data(df)
+
+    print("\nDone! Check output/ for all charts and CSVs.\n")
 
 
 
