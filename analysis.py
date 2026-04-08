@@ -55,3 +55,22 @@ def generate_healthcare_data(n=300_000):
     df["age_group"] = pd.cut(df["age"], bins=[0, 17, 34, 49, 64, 200],
                              labels=["0–17", "18–34", "35–49", "50–64", "65+"])
     return df
+#kpi summary 
+def print_kpis(df):
+    total_patients   = df["patient_id"].nunique()
+    avg_los          = df["los_days"].mean()
+    readmit_rate     = df["readmission"].mean() * 100
+    total_revenue    = df["billed_amount"].sum()
+    top_disease      = df["disease"].value_counts().idxmax()
+    most_used_dept   = df["department"].value_counts().idxmax()
+
+    print("\n" + "=" * 55)
+    print("         HEALTHCARE KPI DASHBOARD")
+    print("=" * 55)
+    print(f"  Total Patients       : {total_patients:>12,}")
+    print(f"  Avg Length of Stay   : {avg_los:>11.2f} days")
+    print(f"  Readmission Rate     : {readmit_rate:>11.2f}%")
+    print(f"  Total Billed         : ${total_revenue:>12,.0f}")
+    print(f"  Top Disease          : {top_disease:>15}")
+    print(f"  Busiest Department   : {most_used_dept:>15}")
+    print("=" * 55)
